@@ -170,6 +170,12 @@ services:
       - CORS_ORIGINS=${CORS_ORIGINS:-}
       - SSRF_ALLOWED_HOSTS=${SSRF_ALLOWED_HOSTS:-}
       - SSRF_DNS_TIMEOUT_MS=${SSRF_DNS_TIMEOUT_MS:-}
+      # The master SSRF switch itself, not just its redirect policy. Without this line the flag
+      # documented in .env.example is unreachable from the dev compose (this file has no env_file,
+      # so an unlisted variable never reaches the container) and webhook egress is locked to the
+      # app default of ON — which refuses a loopback/private receiver outright. Blank preserves that
+      # default; prefer naming the internal host in SSRF_ALLOWED_HOSTS over switching the guard off.
+      - WEBHOOK_SSRF_PROTECT=${WEBHOOK_SSRF_PROTECT:-}
       - WEBHOOK_SSRF_REDIRECTS=${WEBHOOK_SSRF_REDIRECTS:-}
       # Postgres / S3 details (selection keys are forwarded above; blank lets a real host value pin).
       - DATABASE_HOST=${DATABASE_HOST:-}

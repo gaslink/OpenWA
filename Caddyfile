@@ -1,0 +1,3 @@
+openwa.vantetecnologia.com.br {
+    reverse_proxy openwa-api:2785
+}

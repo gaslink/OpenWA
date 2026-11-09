@@ -290,6 +290,12 @@ services:
       - CORS_ORIGINS=${CORS_ORIGINS:-}
       - SSRF_ALLOWED_HOSTS=${SSRF_ALLOWED_HOSTS:-}
       - SSRF_DNS_TIMEOUT_MS=${SSRF_DNS_TIMEOUT_MS:-}
+      # The master SSRF switch itself, not just its redirect policy. This file has no env_file, so a
+      # variable absent from this list never reaches the container: without this line the flag
+      # documented in .env.example cannot be set at all and webhook egress is pinned to the app
+      # default of ON, which refuses a receiver on a private/loopback address. Blank preserves that
+      # default; prefer allowlisting the internal host in SSRF_ALLOWED_HOSTS over disabling the guard.
+      - WEBHOOK_SSRF_PROTECT=${WEBHOOK_SSRF_PROTECT:-}
       - WEBHOOK_SSRF_REDIRECTS=${WEBHOOK_SSRF_REDIRECTS:-}
       # HTTP server tuning (timeouts are relevant behind a proxy that holds connections).
       - REQUEST_TIMEOUT_MS=${REQUEST_TIMEOUT_MS:-}
